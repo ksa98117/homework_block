@@ -36,13 +36,13 @@ var HelloWorldLayer = cc.Layer.extend({
 		this.block.y = 350;
 		this.block.scaleX = 0.7; //벽돌의 위치
 		this.block.scaleY = 0.2; 
+		
 		var initialDirection1 = Math.random(2*Math.PI);//초기 속도
 		this.block.speedX = Math.cos(initialDirection1);
 		this.block.speedY = Math.sin(initialDirection1);
 		this.addChild(this.block);
 		
-		
-		
+
 		var eventListener = cc.EventListener.create({ //특정이벤트가 일어났을때 이벤트함수를 관리하는 겍체.
 			event:cc.EventListener.TOUCH_ONE_BY_ONE,
 			swallowTouches:true,
@@ -90,9 +90,9 @@ var HelloWorldLayer = cc.Layer.extend({
 					//cc.audioEngine.playEffect("res/bang.mp3", false);
 					this.ball.speedY *= -1;
 					if(this.ball.speedX>0){
-					//	this.ball.angleSpeed = 1.2;
+						//this.ball.angleSpeed = 1.2;
 					}else{
-					//	this.ball.angleSpeed = -1.2; 
+						//this.ball.angleSpeed = -1.2; 
 					}
 					this.ball.y = 2*(boxTop+this.ball.getBoundingBox().height/2)-this.ball.y;
 
@@ -103,15 +103,42 @@ var HelloWorldLayer = cc.Layer.extend({
 
 				}
 			}
-//
 
-		//	this.ball.rotation+=this.ball.angleSpeed; //공의 회전
+			//블록 충돌부분-위아래
+			if(this.ball.x>this.block.x-this.block.getBoundingBox().width/2
+					&&this.ball.x<this.block.x+this.block.getBoundingBox().width/2){ //블럭x부분- 공의 중심이 닿는 부분 계산
+				if(this.ball.y+this.ball.getBoundingBox().height/2>this.block.y-this.block.getBoundingBox().height/2
+						&&this.ball.y-this.ball.getBoundingBox().height/2<this.block.y-this.block.getBoundingBox().height/2){//아래 충돌
+					if(this.ball.speedY>0){
+						this.ball.y=2*(this.block.y-this.block.getBoundingBox().height/2- this.ball.getBoundingBox().height/2)-this.ball.y;
+						//this.ball.speedY*=-1; //공의 속도 조절
+
+						//this.block=false;
+						this.block.setVisible(false); //다음 화면에서 블럭을 지운다(블럭을 지우는 것임)
+			
+					}
+					}
+				if(this.ball.x-this.ball.getBoundingBox().width/2<this.block.x+this.block.getBoundingBox().width/2
+						&&this.ball.x+this.ball.getBoundingBox().width/2>this.block.x+this.block.getBoundingBox().width/2){//오른쪽 충돌
+					if(this.ball.speedX<0){
+						this.ball.x=2*(this.block.x+this.block.getBoundingBox().width/2+this.ball.getBoundingBox().width/2)-this.ball.x;
+						this.ball.speedX*=-1; 
+						//this.block=false;
+
+						this.block.setVisible(false);
+			}
+				}
+			}
+	
+		//this.ball.rotation+=this.ball.angleSpeed; //공의 회전
 			this.ball.x += this.ball.speedX;
 			this.ball.y += this.ball.speedY;
 			
-	
-			if(this.ball.x<this.ball.getBoundingBox().width/2){
-				this.ball.speedX *= -1;
+			if(this.ball.x<this.ball.getBoundingBox().width/2){ 	//this.ball.x<this.ball.getBoundingBox().width/2 공의 너비를 의미
+				this.ball.speedX = -this.ball.speedX; //공의 속도를 줄임
+				
+				
+				// this.ball.speedX *= -1; //교수님 코드
 				if(this.ball.speedY>0){
 					//this.ball.angleSpeed = -1.2;
 				}else{
@@ -119,30 +146,35 @@ var HelloWorldLayer = cc.Layer.extend({
 				}
 				this.ball.x = this.ball.getBoundingBox().width-this.ball.x;
 			}
+			
 			if(this.ball.x>this.width-this.ball.getBoundingBox().width/2){
-				this.ball.speedX *= -1;
+				this.ball.speedX = -this.ball.speedX;
+				//this.ball.speedX *= -1; //교수님 코드
 				if(this.ball.speedY>0){
-				//	this.ball.angleSpeed = 1.2;
+					//this.ball.angleSpeed = 1.2;
 				}else{
 					//this.ball.angleSpeed = -1.2;
 				}
 				this.ball.x = 2*(this.width-this.ball.getBoundingBox().width/2)- this.ball.x;
 			}
 			if(this.ball.y<this.ball.getBoundingBox().height/2){
-				this.ball.speedY *= -1;
+				this.ball.speedY = -this.ball.speedY; 
+				//this.ball.speedY *= -1; //교수님 코드
 				if(this.ball.speedX>0){
 				//	this.ball.angleSpeed = 1.2;
 				}else{
-				//	this.ball.angleSpeed = -1.2;
+					//this.ball.angleSpeed = -1.2;
 				}
 				this.ball.y = 2*(this.ball.getBoundingBox().height/2)-this.ball.y;
 			}  
 			if(this.ball.y>this.height-this.ball.getBoundingBox().height/2){
-				this.ball.speedY *= -1;
+				
+				this.ball.speedY = -this.ball.speedY;
+				//this.ball.speedY *= -1;
 				if(this.ball.speedX>0){
 				//	this.ball.angleSpeed = -1.2;
 				}else{
-				//	this.ball.angleSpeed = 1.2;
+					//this.ball.angleSpeed = 1.2;
 				}
 				this.ball.y = 2*(this.height - this.ball.getBoundingBox().height/2) - this.ball.y;
 			}
